@@ -10,7 +10,7 @@ class TrainingWrapper(pl.LightningModule):
         self.model = model
         self.accuracy = Accuracy()
         self.save_hyperparameters()
-        
+
     def training_step(self, batch, batch_idx):
         x, y = batch
         outputs = self.model(x)
@@ -21,7 +21,7 @@ class TrainingWrapper(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch
         outputs = self.model(x)
-        loss = F.cross_entropy(outputs.squeeze(), y.squreeze())
+        loss = F.cross_entropy(outputs.squeeze(), y.squeeze())
         probs = F.softmax(outputs, dim=1)
         preds = torch.argmax(probs, dim=1)
         acc = self.accuracy(preds, y)
@@ -31,7 +31,7 @@ class TrainingWrapper(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         x, y = batch
         outputs = self.model(x)
-        loss = F.cross_entropy(outputs.squeeze(), y.squreeze())
+        loss = F.cross_entropy(outputs.squeeze(), y.squeeze())
         probs = F.softmax(outputs, dim=1)
         preds = torch.argmax(probs, dim=1)
         acc = self.accuracy(preds, y)

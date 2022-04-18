@@ -24,37 +24,30 @@ def main():
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                             download=True, transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
-                                              shuffle=True, num_workers=2)
+                                              shuffle=True, num_workers=6)
 
     valset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                           download=True, transform=transform)
     valloader = torch.utils.data.DataLoader(valset, batch_size=batch_size,
-                                            shuffle=False, num_workers=2)
+                                            shuffle=False, num_workers=6)
 
-    '''
+    
     dataiter = iter(trainloader)
     imgs, labels = dataiter.next()
     print(f'img shape: {imgs.shape}')
     print(f'lables shape: {labels.shape}')
     print(labels)
-    '''
-
-    # 모델 초기화
+    
     model = VisionTransformer()
-    model = model.to(device)
     model = TrainingWrapper(model, lr=0.05)
 
-    # trainer 초기화
-    from pytorch_lightning.profiler import SimpleProfiler
-    profiler = SimpleProfiler()
     trainer = pl.Trainer(
         max_epochs=30,
         gpus=1,
-        profiler=profiler
     )
-    
-    # trainer.fit
+
     trainer.fit(model, trainloader, valloader)
+    trainer.test(test_dataloaders=valloader)
 
 if __name__ == "__main__":
     main()
